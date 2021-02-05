@@ -1,0 +1,94 @@
+.sc-lock {
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 50px;
+    width: 40px;
+    padding: 0;
+    text-align: center;
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sc-lock-disabled {
+    opacity: 0.5;
+}
+
+.sc-lock-clicked {
+    color: black !important;
+}
+
+.sc-lock-red {
+    background: red;
+}
+
+.sc-lock-red:hover {
+    background: rgb(255,150,150);
+}
+
+
+.sc-lock-blue {
+    background: rgb(0,0,150);
+}
+.sc-lock-blue:hover {
+    background: rgb(150,150,255);
+}
+
+.sc-lock-yellow {
+    background:rgb(255,223,76);
+}
+.sc-lock-yellow:hover {
+    background: rgb(255,250,150);
+}
+
+.sc-lock-green {
+    background: rgb(0,150,0);
+}
+.sc-lock-green:hover {
+    background: rgb(100,220,100);
+}
+
+
+/* LOCK ICON */
+
+.sc-lock-icon {
+    border: 2px solid black;
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(20deg);
+}
+
+.sc-lock-icon:hover {
+    cursor: pointer;
+}
+
+.sc-lock-icon-red {
+    background: rgb(255,220,220);
+    color: red;
+    border-color: rgb(170,0,0);
+}
+
+.sc-lock-icon-blue {
+    background: rgb(230,230,255);
+    color: rgb(0,0,150);
+    border-color: rgb(0,0,100);
+}
+
+.sc-lock-icon-green {
+    background: rgb(230,255,230);
+    color: rgb(0,150,0);
+    border-color: rgb(0,100,0);
+}
+
+.sc-lock-icon-yellow {
+    background: rgb(255,250,240);
+    color: rgb(255,223,76);;
+    border-color: rgb(163, 114, 0);
+}

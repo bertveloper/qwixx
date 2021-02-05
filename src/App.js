@@ -1,25 +1,21 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
+import Scorecard from './components/scorecard.js';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Dit wordt een helper voor Qwixx
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <Scorecard />
+  
+
+
+  // return (
+  //   <div className="App">
+  //     <header className="App-header">
+  //       <p>
+  //         Dit wordt een helper voor Qwixx
+  //       </p>
+  //     </header>
+  //   </div>
+  // );
 }
 
 export default App;

@@ -1,0 +1,103 @@
+/* ----- NUM SQUARE ----- */
+.sc-numsquare {
+    float: left;
+    height: 50px;
+    width: 40px;
+    padding: 0;
+    text-align: center;
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sc-numsquare-disabled {
+    opacity: 0.5;
+}
+
+.sc-numsquare-red {
+    background: red;
+}
+.sc-numsquare-red:hover {
+    background: rgb(255,150,150);
+}
+
+.sc-numsquare-blue {
+    background: rgb(0,0,150);
+}
+.sc-numsquare-blue:hover {
+    background: rgb(150,150,255);
+}
+
+.sc-numsquare-yellow {
+    background:rgb(255,223,76);
+}
+.sc-numsquare-yellow:hover {
+    background: rgb(255,250,150);
+}
+
+.sc-numsquare-green {
+    background: rgb(0,150,0);
+}
+.sc-numsquare-green:hover {
+    background: rgb(100,220,100);
+}
+
+.sc-numsquare:first-child {
+    padding-left: 10px;
+}
+
+.sc-numsquare:last-child {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    align-self: center;
+    margin-left: 10px;
+}
+
+
+/* ----- NUM BUTTON ----- */
+.sc-num-btn {
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
+    border-radius: 5px;
+    height: 85%;
+    width: 100%;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+}
+
+.sc-num-btn:hover {
+    cursor: pointer;
+}
+
+.sc-num-btn-disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5;
+}
+
+.sc-num-btn-red {
+    background: rgb(255,220,220);
+    color: red;
+    border-color: rgb(170,0,0);
+}
+
+.sc-num-btn-blue {
+    background: rgb(230,230,255);
+    color: rgb(0,0,150);
+    border-color: rgb(0,0,100);
+}
+
+.sc-num-btn-green {
+    background: rgb(230,255,230);
+    color: rgb(0,150,0);
+    border-color: rgb(0,100,0);
+}
+
+.sc-num-btn-yellow {
+    background: rgb(255,250,240);
+    color: rgb(255,223,76);;
+    border-color: rgb(163, 114, 0);
+}
