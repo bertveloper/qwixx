@@ -13,22 +13,16 @@
 }
 
 .sc-container-rows {
-    max-height: 200px;
-    /* width: 85%; */
+    max-height: 220px;
     overflow: hidden;
     background: lightgrey;
-    padding: 7px;
+    padding: 5px;
     border: 1px solid black;
 }
-/* 
-.sc-row-red {
-    background: red;
-} */
 
 .sc-row {
     height: 50px;
-    padding: 5px;
-    /* padding-left: 10px; */
+    padding: 2px;
     display: flex;
     justify-content: center;
 }
@@ -47,19 +41,6 @@
     border: 1px solid black;
 }
 
-.sc-pass {
-    background: lightgrey;
-}
-
-.sc-pass-row {
-
-}
-
-.sc-pass-opt {
-
-}
-
 .sc-scores {
-    background: grey;
+    background: white;
 }
-

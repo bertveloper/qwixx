@@ -19,9 +19,10 @@ class NumberSquare extends React.Component {
         if (this.props.data.clicked) {
             btnClasses += " sc-num-btn-clicked";
         }
+        var id = "sc-numsquare-" + this.props.data.x + this.props.data.y;
 
         return (
-                <div className={divClasses} >
+                <div id={id} className={divClasses} >
                     <button className={btnClasses} 
                             onClick={this.props.onClick}
                             disabled={this.props.data.disabled}>

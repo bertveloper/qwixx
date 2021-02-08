@@ -1,0 +1,45 @@
+.sc-score {
+    background: white;
+    float: left;
+    height: 50px;
+    width: 40px;
+    padding: 0;
+    text-align: center;
+    box-shadow: 0 4px 4px 0 rgb(0 0 0 / 20%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid black;
+    border-radius: 15px;
+    height: 30px;
+    width: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    margin: 5px;
+}
+
+.sc-score-red {
+    border-color: red;
+    color: red;
+}
+
+.sc-score-yellow {
+    border-color: rgb(255,223,76);
+    color: rgb(255,223,76);
+}
+
+.sc-score-green {
+    border-color: rgb(0,150,0);
+    color: rgb(0,150,0);
+}
+
+.sc-score-blue {
+    border-color: rgb(0,0,150);
+    color: rgb(0,0,150);
+}
+
+.sc-score-grey {
+    border-color: grey;
+    color: grey;
+}
