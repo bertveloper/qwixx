@@ -2,7 +2,7 @@ import React from 'react';
 import './scorecard.css';
 import NumberSquare from './numberSquare.js';
 import Lock from './lock.js';
-import PassChecks from './passChecks.js';
+import './passChecks.css';
 import Score from './score.js';
 
 class Scorecard extends React.Component{
@@ -11,17 +11,22 @@ class Scorecard extends React.Component{
 
 
         const scores = [
-            { "color":"red",    "score":0,  "hidden":true },
-            { "color":"yellow", "score":10, "hidden":true },
-            { "color":"green",  "score":20, "hidden":true },
-            { "color":"blue",   "score":30, "hidden":true },
-            { "color":"grey",   "score":-5, "hidden":true }
+            { "color":"red",    "score":0,    "hidden":true },
+            { "color":"yellow", "score":0,    "hidden":true },
+            { "color":"green",  "score":0,    "hidden":true },
+            { "color":"blue",   "score":0,    "hidden":true },
+            { "color":"grey",   "score":0,    "hidden":true },
+            { "color":"total",  "score":null, "hidden":false }
         ]
 
+        const totalScore = 
+
         this.state = {
-            rows: standardRows,
-            locks: standardLocks,
-            scores: scores
+            isFullscreen: false,
+            rows: standardRows,   // TODO: supply instead of hardcode
+            locks: standardLocks, // TODO: supply instead of hardcode
+            scores: scores,       // TODO: supply instead of hardcode
+            passChecks: Array(4).fill(false),
         }
     }
 
@@ -35,6 +40,39 @@ class Scorecard extends React.Component{
         else {
             alert("Coming soon");
         }
+    }
+
+    handleClick(data) {        
+        // handle unclick
+        if(data.clicked){
+            this.handleUnclick(data);
+        }
+        else {
+            // get clicked square
+            var copyRows = this.state.rows.slice();
+            var copyRow = copyRows[data.y];
+            var copySquare = copyRow[data.x];
+
+            // set clicked
+            copySquare.clicked = true;
+            copyRow[data.x] = copySquare;
+
+            // disable previous squares
+            for (let i = 0; i < data.x; i++) {
+                var sq = copyRow[i];
+                sq.disabled = true;
+                copyRow[i] = sq;
+            }
+
+            copyRows[data.y] = copyRow;
+
+            this.setState({
+                rows: copyRows
+            });
+        }
+        
+        this.checkRowState(data.y);
+        this.updateScore();
     }
 
     handleUnclick(data){
@@ -71,38 +109,6 @@ class Scorecard extends React.Component{
         return;
     }
 
-    handleClick(data) {        
-        // handle unclick
-        if(data.clicked){
-            this.handleUnclick(data);
-        }
-        else {
-            // get clicked square
-            var copyRows = this.state.rows.slice();
-            var copyRow = copyRows[data.y];
-            var copySquare = copyRow[data.x];
-
-            // set clicked
-            copySquare.clicked = true;
-            copyRow[data.x] = copySquare;
-
-            // disable previous squares
-            for (let i = 0; i < data.x; i++) {
-                var sq = copyRow[i];
-                sq.disabled = true;
-                copyRow[i] = sq;
-            }
-
-            copyRows[data.y] = copyRow;
-
-            this.setState({
-                rows: copyRows
-            });
-        }
-        
-        this.checkRowState(data.y);
-    }
-
     handleLockClick(data) {
         // if (data.clicked) {
         //     handleLockUnclick(data);
@@ -119,6 +125,16 @@ class Scorecard extends React.Component{
         this.setState({
             locks: copyLocks
         });
+
+        this.updateScore();
+
+        if (copyLocks.filter(l => l.clicked).length > 1) {
+            this.endGame();
+        }
+    }
+
+    handleLockUnclick(data){
+        // todo;
     }
 
     checkRowState(row) {
@@ -143,6 +159,65 @@ class Scorecard extends React.Component{
         });
     }
 
+    updateScore(){
+        var colors = ["red", "blue", "green", "yellow"];
+
+        // get all clicked squares, group by color
+        var firstRowClickedSquares = this.state.rows[0].filter(x => x.clicked);
+        var secondRowClickedSquares = this.state.rows[1].filter(x => x.clicked);
+        var thirdRowClickedSquares = this.state.rows[2].filter(x => x.clicked);
+        var fourthRowClickedSquares = this.state.rows[3].filter(x => x.clicked);
+        var allClickedSquares = firstRowClickedSquares.concat(secondRowClickedSquares).concat(thirdRowClickedSquares).concat(fourthRowClickedSquares);
+        
+        var scoresCopy = this.state.scores.slice();
+
+        colors.forEach(clr => {
+            var lockClicked = this.state.locks.find(l => l.color === clr).clicked;
+            var clickedSquares = allClickedSquares.filter(x => x.color === clr);
+            var colorScore = scoresCopy.find(s => s.color === clr);
+            colorScore.score = this.calculatePoints(clickedSquares.length, lockClicked);
+        });
+
+        this.setState({
+            scores: scoresCopy
+        })
+    }
+
+    calculatePoints(clickedSquares, lockClicked) {
+        if (lockClicked) {
+            clickedSquares++;
+        }
+
+        switch (clickedSquares) {
+            case 1:
+                return 1;
+            case 2:
+                return 3;
+            case 3:
+                return 6;
+            case 4:
+                return 10;
+            case 5:
+                return 15;
+            case 6:
+                return 21;
+            case 7:
+                return 28;
+            case 8:
+                return 36;
+            case 9:
+                return 45;
+            case 10:
+                return 55;
+            case 11:
+                return 66;
+            case 12:
+                return 78;
+            default:
+                return 0;
+        }
+    }
+
     renderRow(row) {
         var squareList = this.state.rows[row];
         var lock = this.state.locks[row];
@@ -160,19 +235,117 @@ class Scorecard extends React.Component{
     }
 
     renderScores(){
-        var scores = this.state.scores;
-
+        var scores = this.state.scores.filter(s => s.color != "total");
+        var totalScore = this.state.scores.filter(s => s.color == "total")[0];
+        
         return(
             <div className="sc-scores">
                 {scores.map(s => <Score 
                                     data={s}
-                                    onClick={()=> this.handleScoreClick(s)}/>)}
+                                    onClick={()=> this.handleScoreClick(s)}/>
+                            )}
+                <Score data={totalScore} />
             </div>
         )
     }
 
     handleScoreClick(score) {
         console.log("Score clicked: ", score);
+
+        var scoresCopy = this.state.scores.slice();
+        var clickedScore = scoresCopy.find(s => s.color == score.color);
+        clickedScore.hidden = !clickedScore.hidden;
+
+        this.setState({
+            scores: scoresCopy
+        });
+    }
+
+    renderFullscreenBtn(){
+        return(
+            <div onClick={()=>this.fullScreen()} >
+                {this.state.isFullscreen ? 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36"><path fillRule="evenodd" d="M8.25 3a.75.75 0 01.75.75v3.5A1.75 1.75 0 017.25 9h-3.5a.75.75 0 010-1.5h3.5a.25.25 0 00.25-.25v-3.5A.75.75 0 018.25 3zm7.5 0a.75.75 0 01.75.75v3.5c0 .138.112.25.25.25h3.5a.75.75 0 010 1.5h-3.5A1.75 1.75 0 0115 7.25v-3.5a.75.75 0 01.75-.75zM3 15.75a.75.75 0 01.75-.75h3.5c.966 0 1.75.784 1.75 1.75v3.5a.75.75 0 01-1.5 0v-3.5a.25.25 0 00-.25-.25h-3.5a.75.75 0 01-.75-.75zm12 1c0-.966.784-1.75 1.75-1.75h3.5a.75.75 0 010 1.5h-3.5a.25.25 0 00-.25.25v3.5a.75.75 0 01-1.5 0v-3.5z"></path></svg>
+                    :
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36"><path fillRule="evenodd" d="M4.75 4.5a.25.25 0 00-.25.25v3.5a.75.75 0 01-1.5 0v-3.5C3 3.784 3.784 3 4.75 3h3.5a.75.75 0 010 1.5h-3.5zM15 3.75a.75.75 0 01.75-.75h3.5c.966 0 1.75.784 1.75 1.75v3.5a.75.75 0 01-1.5 0v-3.5a.25.25 0 00-.25-.25h-3.5a.75.75 0 01-.75-.75zM3.75 15a.75.75 0 01.75.75v3.5c0 .138.112.25.25.25h3.5a.75.75 0 010 1.5h-3.5A1.75 1.75 0 013 19.25v-3.5a.75.75 0 01.75-.75zm16.5 0a.75.75 0 01.75.75v3.5A1.75 1.75 0 0119.25 21h-3.5a.75.75 0 010-1.5h3.5a.25.25 0 00.25-.25v-3.5a.75.75 0 01.75-.75z"></path></svg>
+                }
+            </div>
+        );
+    }
+
+    fullScreen(){
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+            requestFullScreen.call(docEl);
+            this.setState({
+                isFullscreen: true
+            });
+        }
+        else {
+            cancelFullScreen.call(doc);
+            this.setState({
+                isFullscreen: false
+            });
+        }
+    }
+
+    clickPassCheck(index){
+        // get pass check
+        var passChecksCopy = this.state.passChecks.slice();
+        var passCheck = passChecksCopy[index];
+        passChecksCopy[index] = !passCheck;
+
+        var scoresCopy = this.state.scores;
+        var passScoreCopy = scoresCopy.find(s => s.color === 'grey')
+        var passScore = passChecksCopy.filter(p => p).length * -5;
+        passScoreCopy.score = passScore;
+
+        this.setState({
+            passChecks: passChecksCopy,
+            scores: scoresCopy
+        });
+
+        // if all checks clicked
+        if (!passChecksCopy.includes(false)) {
+            this.endGame();
+        }
+    }
+
+    endGame(){
+        var scoresCopy = this.state.scores.slice();
+        var totalScore = scoresCopy.filter(s => s.color != "total").map(s => s.score).reduce((a, b) => a+ b);
+        var totalScoreObj = scoresCopy.find(s => s.color === "total");
+        totalScoreObj.score = totalScore;
+
+        this.setState({
+            scores: scoresCopy
+        });
+
+        window.alert("Einde! Score: " + totalScore);
+    }
+
+    renderPassChecks(){
+        var passChecks = this.state.passChecks;
+
+        return (
+            <div className="sc-pass"> 
+                <div className="sc-pass-expl">Mislukte ronde -5</div>
+                <div className="sc-pass-checks">
+                    {passChecks.map((p,i) =>  
+                        <div className="sc-pass-check" onClick={()=>this.clickPassCheck(i)} >
+                            {p ? String.fromCharCode(10060) : ""}
+                        </div>
+                    )}
+                </div>
+                    
+                    
+            </div>
+        )
     }
     
     render(){
@@ -180,8 +353,11 @@ class Scorecard extends React.Component{
             <div className="sc-wrapper">
                 
                 <div className="sc-sidebar">
+                    {this.renderFullscreenBtn()}
+                    
                     <button onClick={()=>this.handleMode(0)}>Standard</button>
                     <button onClick={()=>this.handleMode(1)}>Mixed 1</button>
+                    
                 </div>
                 <div className="sc-container-rows">
                         {this.renderRow(0)}
@@ -193,9 +369,9 @@ class Scorecard extends React.Component{
                 <div className="sc-container-calculation">
                     <div className="sc-calculation">
                     </div>
-                    <PassChecks />
+                    {this.renderPassChecks()}
+                    {/* <PassChecks data={this.state.passes} /> */}
                     {this.renderScores()}
-                    {/* <div className="sc-scores">Score  [10]   [10]   [20]   [20]</div> */}
                 </div>
             </div>
         )

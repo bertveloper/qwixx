@@ -9,7 +9,7 @@ class Score extends React.Component {
         return (
             <div className={classes} 
                  onClick={this.props.onClick}>
-                             {score.score}
+                             {score.hidden ? "" : score.score}
             </div>
         );
     }
