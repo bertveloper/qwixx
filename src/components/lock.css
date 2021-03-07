@@ -18,7 +18,7 @@
 }
 
 .sc-lock-clicked {
-    color: black !important;
+    color: black;
 }
 
 .sc-lock-red {
@@ -63,6 +63,11 @@
     align-items: center;
     justify-content: center;
     transform: rotate(20deg);
+}
+
+.sc-lock-icon-clicked {
+    transform: rotate(0);
+    font-size: 18px;
 }
 
 .sc-lock-icon:hover {

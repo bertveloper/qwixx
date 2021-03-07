@@ -109,17 +109,14 @@ class Scorecard extends React.Component{
         return;
     }
 
-    handleLockClick(data) {
-        // if (data.clicked) {
-        //     handleLockUnclick(data);
-        //     return;
-        // }
-        
-        // set LOCK
+    handleLockClick(lock) {
         var copyLocks = this.state.locks.slice();
-        copyLocks[data.row].clicked = true;
-        
-        // TODO: set row to disabled
+
+        // if lock was clicked (so unclick), set to enabled
+        // if lock was not clicked (so click), set to disabled 
+        copyLocks[lock.row].clicked = !lock.clicked;
+        this.changeDisableStateRow(lock.row, lock.clicked);
+
         // TODO: different locks when you close the row yourself vs. someone else
         
         this.setState({
@@ -133,8 +130,20 @@ class Scorecard extends React.Component{
         }
     }
 
-    handleLockUnclick(data){
-        // todo;
+    changeDisableStateRow(row, disabledState){
+        var copyRows = this.state.rows.slice();
+        var copyRow = copyRows[row];
+
+        for (let i = copyRow.length - 1; i >= 0; i--) {
+            var sq = copyRow[i];
+            sq.disabled = disabledState;
+
+            if (sq.clicked) { break; }
+        }
+
+        this.setState({
+            rows: copyRows
+        });
     }
 
     checkRowState(row) {
@@ -159,7 +168,7 @@ class Scorecard extends React.Component{
         });
     }
 
-    updateScore(){
+    updateScore() {
         var colors = ["red", "blue", "green", "yellow"];
 
         // get all clicked squares, group by color
@@ -170,12 +179,16 @@ class Scorecard extends React.Component{
         var allClickedSquares = firstRowClickedSquares.concat(secondRowClickedSquares).concat(thirdRowClickedSquares).concat(fourthRowClickedSquares);
         
         var scoresCopy = this.state.scores.slice();
+        var locksCopy = this.state.locks.slice();
 
         colors.forEach(clr => {
-            var lockClicked = this.state.locks.find(l => l.color === clr).clicked;
+            var lock = locksCopy.find(l => l.color === clr);
+            var lastSq = this.state.rows[lock.row].slice(-1)[0];
+            var lockCounts = lock.clicked && lastSq.clicked;
+
             var clickedSquares = allClickedSquares.filter(x => x.color === clr);
             var colorScore = scoresCopy.find(s => s.color === clr);
-            colorScore.score = this.calculatePoints(clickedSquares.length, lockClicked);
+            colorScore.score = this.calculatePoints(clickedSquares.length, lockCounts);
         });
 
         this.setState({
