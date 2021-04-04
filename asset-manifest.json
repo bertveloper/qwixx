@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/qwixx/static/css/main.6c3a937a.chunk.css",
-    "main.js": "/qwixx/static/js/main.69574f59.chunk.js",
-    "main.js.map": "/qwixx/static/js/main.69574f59.chunk.js.map",
+    "main.js": "/qwixx/static/js/main.a2c16bcd.chunk.js",
+    "main.js.map": "/qwixx/static/js/main.a2c16bcd.chunk.js.map",
     "runtime-main.js": "/qwixx/static/js/runtime-main.284744fc.js",
     "runtime-main.js.map": "/qwixx/static/js/runtime-main.284744fc.js.map",
     "static/js/2.05bec642.chunk.js": "/qwixx/static/js/2.05bec642.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.284744fc.js",
     "static/js/2.05bec642.chunk.js",
     "static/css/main.6c3a937a.chunk.css",
-    "static/js/main.69574f59.chunk.js"
+    "static/js/main.a2c16bcd.chunk.js"
   ]
 }
