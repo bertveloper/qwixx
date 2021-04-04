@@ -9,23 +9,11 @@ class Scorecard extends React.Component{
     constructor(props) {
         super(props);
 
-
-        const scores = [
-            { "color":"red",    "score":0,    "hidden":true },
-            { "color":"yellow", "score":0,    "hidden":true },
-            { "color":"green",  "score":0,    "hidden":true },
-            { "color":"blue",   "score":0,    "hidden":true },
-            { "color":"grey",   "score":0,    "hidden":true },
-            { "color":"total",  "score":null, "hidden":false }
-        ]
-
-        const totalScore = 
-
         this.state = {
             isFullscreen: false,
-            rows: standardRows,   // TODO: supply instead of hardcode
-            locks: standardLocks, // TODO: supply instead of hardcode
-            scores: scores,       // TODO: supply instead of hardcode
+            rows: standardRows,         // TODO: supply instead of hardcode
+            locks: standardLocks,       // TODO: supply instead of hardcode
+            scores: baseScores,         // TODO: supply instead of hardcode
             passChecks: Array(4).fill(false),
         }
     }
@@ -396,30 +384,30 @@ class Scorecard extends React.Component{
 
 const standardRows = [
     [
-        {"x":0, "y":0, "color":"red", "number":12, "clicked": false, disabled: false },
-        {"x":1, "y":0, "color":"red", "number":11, "clicked": false, disabled: false },
-        {"x":2, "y":0, "color":"red", "number":10, "clicked": false, disabled: false },   
-        {"x":3, "y":0, "color":"red", "number":9, "clicked": false, disabled: false },
-        {"x":4, "y":0, "color":"red", "number":8, "clicked": false, disabled: false },
+        {"x":0, "y":0, "color":"red", "number":2, "clicked": false, disabled: false },
+        {"x":1, "y":0, "color":"red", "number":3, "clicked": false, disabled: false },
+        {"x":2, "y":0, "color":"red", "number":4, "clicked": false, disabled: false },   
+        {"x":3, "y":0, "color":"red", "number":5, "clicked": false, disabled: false },
+        {"x":4, "y":0, "color":"red", "number":6, "clicked": false, disabled: false },
         {"x":5, "y":0, "color":"red", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":0, "color":"red", "number":6, "clicked": false, disabled: false },
-        {"x":7, "y":0, "color":"red", "number":5, "clicked": false, disabled: false},
-        {"x":8, "y":0, "color":"red", "number":4, "clicked": false, disabled: false },
-        {"x":9, "y":0, "color":"red", "number":3, "clicked": false, disabled: false },
-        {"x":10, "y":0, "color":"red", "number":2, "clicked": false, disabled: true },
+        {"x":6, "y":0, "color":"red", "number":8, "clicked": false, disabled: false },
+        {"x":7, "y":0, "color":"red", "number":9, "clicked": false, disabled: false},
+        {"x":8, "y":0, "color":"red", "number":10, "clicked": false, disabled: false },
+        {"x":9, "y":0, "color":"red", "number":11, "clicked": false, disabled: false },
+        {"x":10, "y":0, "color":"red", "number":12, "clicked": false, disabled: true },
     ],
     [
-        {"x":0, "y":1, "color":"yellow", "number":12, "clicked": false, disabled: false },
-        {"x":1, "y":1, "color":"yellow", "number":11, "clicked": false, disabled: false },
-        {"x":2, "y":1, "color":"yellow", "number":10, "clicked": false, disabled: false },   
-        {"x":3, "y":1, "color":"yellow", "number":9, "clicked": false, disabled: false },
-        {"x":4, "y":1, "color":"yellow", "number":8, "clicked": false, disabled: false },
+        {"x":0, "y":1, "color":"yellow", "number":2, "clicked": false, disabled: false },
+        {"x":1, "y":1, "color":"yellow", "number":3, "clicked": false, disabled: false },
+        {"x":2, "y":1, "color":"yellow", "number":4, "clicked": false, disabled: false },   
+        {"x":3, "y":1, "color":"yellow", "number":5, "clicked": false, disabled: false },
+        {"x":4, "y":1, "color":"yellow", "number":6, "clicked": false, disabled: false },
         {"x":5, "y":1, "color":"yellow", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":1, "color":"yellow", "number":6, "clicked": false, disabled: false },
-        {"x":7, "y":1, "color":"yellow", "number":5, "clicked": false, disabled: false},
-        {"x":8, "y":1, "color":"yellow", "number":4, "clicked": false, disabled: false },
-        {"x":9, "y":1, "color":"yellow", "number":3, "clicked": false, disabled: false },
-        {"x":10, "y":1, "color":"yellow", "number":2, "clicked": false, disabled: true },
+        {"x":6, "y":1, "color":"yellow", "number":8, "clicked": false, disabled: false },
+        {"x":7, "y":1, "color":"yellow", "number":9, "clicked": false, disabled: false},
+        {"x":8, "y":1, "color":"yellow", "number":10, "clicked": false, disabled: false },
+        {"x":9, "y":1, "color":"yellow", "number":11, "clicked": false, disabled: false },
+        {"x":10, "y":1, "color":"yellow", "number":12, "clicked": false, disabled: true },
     ],
     [
         {"x":0, "y":2, "color":"green", "number":12, "clicked": false, disabled: false },
@@ -437,7 +425,7 @@ const standardRows = [
     [
         {"x":0, "y":3, "color":"blue", "number":12, "clicked": false, disabled: false },
         {"x":1, "y":3, "color":"blue", "number":11, "clicked": false, disabled: false },
-        {"x":2, "y":3, "color":"blue", "number":13, "clicked": false, disabled: false },   
+        {"x":2, "y":3, "color":"blue", "number":10, "clicked": false, disabled: false },   
         {"x":3, "y":3, "color":"blue", "number":9, "clicked": false, disabled: false },
         {"x":4, "y":3, "color":"blue", "number":8, "clicked": false, disabled: false },
         {"x":5, "y":3, "color":"blue", "number":7, "clicked": false, disabled: false },
@@ -455,5 +443,14 @@ const standardLocks = [
     {"row" : 2, "color" : "green", "clicked" : false },
     {"row" : 3, "color" : "blue", "clicked" : false }
 ];
+
+const baseScores = [
+    { "color":"red",    "score":0,    "hidden":true },
+    { "color":"yellow", "score":0,    "hidden":true },
+    { "color":"green",  "score":0,    "hidden":true },
+    { "color":"blue",   "score":0,    "hidden":true },
+    { "color":"grey",   "score":0,    "hidden":true },
+    { "color":"total",  "score":null, "hidden":false }
+]
 
 export default Scorecard;
