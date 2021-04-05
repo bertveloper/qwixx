@@ -5,10 +5,14 @@
     width: 40px;
     padding: 0;
     text-align: center;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);    
+    display: -webkit-box;
+    display: -webkit-flex;
+	display: flex;
+    -webkit-justify-content: center;
     justify-content: center;
+	-webkit-align-items: center;
+	align-items: center;
 }
 
 .sc-numsquare-disabled {
@@ -50,7 +54,9 @@
 .sc-numsquare:last-child {
     height: 35px;
     width: 35px;
+    -webkit-border-radius: 50%;
     border-radius: 50%;
+    -webkit-align-self: center;
     align-self: center;
     margin-left: 10px;
 }
@@ -61,6 +67,7 @@
     border: 1px solid black;
     border-bottom: 2px solid black;
     border-top: 2px solid black;
+    -webkit-border-radius: 5px;
     border-radius: 5px;
     height: 85%;
     width: 100%;

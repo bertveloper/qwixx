@@ -23,8 +23,11 @@
 .sc-row {
     height: 50px;
     padding: 2px;
-    display: flex;
-    justify-content: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+	display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;    
 }
 
 .sc-container-calculation {
