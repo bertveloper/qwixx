@@ -358,7 +358,7 @@ class Scorecard extends React.Component{
                     
                     <button onClick={()=>this.handleMode(0)}>Standard</button>
                     <button onClick={()=>this.handleMode(1)}>Mixed 1</button>
-                    
+                    <button onClick={()=>this.handleMode(2)}>Mixed 2</button>
                 </div>
                 <div className="sc-container-rows">
                         {this.renderRow(0)}

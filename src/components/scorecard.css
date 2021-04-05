@@ -1,16 +1,31 @@
-.sc-wrapper {
-    overflow: hidden;
-    max-height: 500px;
-    background: grey;
+@media screen and (max-width: 450px) {
+    .sc-sidebar {
+        width: 100vw;
+        height: auto;
+        /* background: fixed lightgrey; */
+        /* float: left; */
+        /* border: 1px solid grey; */
+        padding-bottom: 10px;
+    }
 }
 
-.sc-sidebar {
-    width: 15%;
-    height: 300px;
-    background: fixed lightgrey;
-    float: left;
-    border: 1px solid grey;
+@media screen and (min-width: 451px){
+    .sc-sidebar {
+        width: 15%;
+        height: 100vh;
+        /* background: fixed lightgrey; */
+        float: left;
+        /* border: 1px solid grey; */
+        padding-bottom: 10px;
+    }     
 }
+
+.sc-wrapper {
+    overflow: hidden;
+    height:100vh;
+    background: lightgrey;
+}
+
 
 .sc-container-rows {
     max-height: 220px;
@@ -18,6 +33,7 @@
     background: lightgrey;
     padding: 5px;
     border: 1px solid black;
+    border-radius: 5px;
 }
 
 .sc-row {
@@ -31,7 +47,7 @@
 }
 
 .sc-container-calculation {
-    background: #c2c2c2;
+    background: lightgrey;
     overflow: hidden;
     height: 100px;
     padding: 7px;
