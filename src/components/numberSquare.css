@@ -74,6 +74,7 @@
     font-size: 24px;
     font-weight: bold;
     line-height: 34px;
+    padding: 0px;
 }
 
 .sc-num-btn:hover {
@@ -83,6 +84,10 @@
 .sc-num-btn-disabled {
     cursor: not-allowed !important;
     opacity: 0.5;
+}
+
+.sc-num-btn-highlight {
+    border:4px solid black !important;
 }
 
 .sc-num-btn-red {

@@ -4,29 +4,25 @@ import NumberSquare from './numberSquare.js';
 import Lock from './lock.js';
 import './passChecks.css';
 import Score from './score.js';
+import { modes } from './modes';
 
 class Scorecard extends React.Component{
     constructor(props) {
         super(props);
 
+        var modeId = "standard"; // TODO: supply from App js?
+
+        var copyModes = JSON.parse(JSON.stringify(modes));
+        var mode = copyModes.find(m => m.id === modeId);
+        var copyBaseScores = JSON.parse(JSON.stringify(baseScores));
+
         this.state = {
             isFullscreen: false,
-            rows: standardRows,         // TODO: supply instead of hardcode
-            locks: standardLocks,       // TODO: supply instead of hardcode
-            scores: baseScores,         // TODO: supply instead of hardcode
+            rows: mode.rows,
+            locks: mode.locks,
+            scores: copyBaseScores,
             passChecks: Array(4).fill(false),
-        }
-    }
-
-    handleMode(mode) {
-        if (mode === 0) {
-            this.setState({
-                rows: standardRows,
-                locks: standardLocks
-            });
-        }
-        else {
-            alert("Coming soon");
+            modeSelected: mode.id
         }
     }
 
@@ -159,6 +155,10 @@ class Scorecard extends React.Component{
     updateScore() {
         var colors = ["red", "blue", "green", "yellow"];
 
+        if (this.state.modeSelected.startsWith('connect')) {
+            colors.push("highlight");
+        }
+
         // get all clicked squares, group by color
         var firstRowClickedSquares = this.state.rows[0].filter(x => x.clicked);
         var secondRowClickedSquares = this.state.rows[1].filter(x => x.clicked);
@@ -170,18 +170,27 @@ class Scorecard extends React.Component{
         var locksCopy = this.state.locks.slice();
 
         colors.forEach(clr => {
-            var lock = locksCopy.find(l => l.color === clr);
-            var lastSq = this.state.rows[lock.row].slice(-1)[0];
-            var lockCounts = lock.clicked && lastSq.clicked;
-
-            var clickedSquares = allClickedSquares.filter(x => x.color === clr);
+            var lockCounts = false;
+            var amountClicked = 0;
+            
+            // only check lock for actual colors, not for highlighted squares
+            if (clr !== "highlight") {
+                var lock = locksCopy.find(l => l.color === clr);
+                var lastSq = this.state.rows[lock.row].slice(-1)[0];
+                lockCounts = lock.clicked && lastSq.clicked;
+                amountClicked = allClickedSquares.filter(x => x.color === clr).length;    
+            }
+            else {
+                amountClicked = allClickedSquares.filter(x => x.highlight).length;
+            }
+            
             var colorScore = scoresCopy.find(s => s.color === clr);
-            colorScore.score = this.calculatePoints(clickedSquares.length, lockCounts);
+            colorScore.score = this.calculatePoints(amountClicked, lockCounts);
         });
 
         this.setState({
             scores: scoresCopy
-        })
+        });
     }
 
     calculatePoints(clickedSquares, lockClicked) {
@@ -226,6 +235,7 @@ class Scorecard extends React.Component{
         return (
             <div className="sc-row">
                 {squareList.map(s => <NumberSquare 
+                                        key={s.x + "-" + s.y}
                                         data={s}
                                         onClick={()=> this.handleClick(s)}/>)}
                 <Lock 
@@ -236,8 +246,8 @@ class Scorecard extends React.Component{
     }
 
     renderScores(){
-        var scores = this.state.scores.filter(s => s.color != "total");
-        var totalScore = this.state.scores.filter(s => s.color == "total")[0];
+        var scores = this.state.scores.filter(s => s.color !== "total");
+        var totalScore = this.state.scores.filter(s => s.color === "total")[0];
         
         return(
             <div className="sc-scores">
@@ -254,7 +264,7 @@ class Scorecard extends React.Component{
         console.log("Score clicked: ", score);
 
         var scoresCopy = this.state.scores.slice();
-        var clickedScore = scoresCopy.find(s => s.color == score.color);
+        var clickedScore = scoresCopy.find(s => s.color === score.color);
         clickedScore.hidden = !clickedScore.hidden;
 
         this.setState({
@@ -319,7 +329,7 @@ class Scorecard extends React.Component{
 
     endGame(){
         var scoresCopy = this.state.scores.slice();
-        var totalScore = scoresCopy.filter(s => s.color != "total").map(s => s.score).reduce((a, b) => a+ b);
+        var totalScore = scoresCopy.filter(s => s.color !== "total").map(s => s.score).reduce((a, b) => a+ b);
         var totalScoreObj = scoresCopy.find(s => s.color === "total");
         totalScoreObj.score = totalScore;
 
@@ -349,16 +359,46 @@ class Scorecard extends React.Component{
         )
     }
     
+    handleModeSelection(modeId){
+        var copyModes = JSON.parse(JSON.stringify(modes));
+        var chosenMode = copyModes.find(m => m.id === modeId);
+        var copyBaseScores = JSON.parse(JSON.stringify(baseScores));
+
+        if (chosenMode.id.startsWith('connect')) {
+            var copyHighlightScore = JSON.parse(JSON.stringify(highlightScore));
+            // insert the highlight score at index 4 (after the four colors)
+            copyBaseScores.splice(4, 0, copyHighlightScore);            
+        }
+
+        this.setState({
+            rows: chosenMode.rows,
+            locks: chosenMode.locks,
+            scores: copyBaseScores,
+            passChecks: Array(4).fill(false),
+            modeSelected: modeId
+        });
+    }
+
+    renderModeSelector() {
+        
+        return (
+            <div className="sc-mode-selection">
+                <select className="sc-mode-selector" onChange={(event)=>this.handleModeSelection(event.target.value)} value={this.state.modeSelected}>
+                    {modes.map((m,i) => 
+                        <option key={m.id} value={m.id}>{m.modeName}</option>
+                    )}
+                </select>
+            </div>
+        )
+    }
+
     render(){
         return (
             <div className="sc-wrapper">
                 
                 <div className="sc-sidebar">
                     {this.renderFullscreenBtn()}
-                    
-                    <button onClick={()=>this.handleMode(0)}>Standard</button>
-                    <button onClick={()=>this.handleMode(1)}>Mixed 1</button>
-                    <button onClick={()=>this.handleMode(2)}>Mixed 2</button>
+                    {this.renderModeSelector()}
                 </div>
                 <div className="sc-container-rows">
                         {this.renderRow(0)}
@@ -371,7 +411,6 @@ class Scorecard extends React.Component{
                     <div className="sc-calculation">
                     </div>
                     {this.renderPassChecks()}
-                    {/* <PassChecks data={this.state.passes} /> */}
                     {this.renderScores()}
                 </div>
             </div>
@@ -382,67 +421,67 @@ class Scorecard extends React.Component{
     
 }
 
-const standardRows = [
-    [
-        {"x":0, "y":0, "color":"red", "number":2, "clicked": false, disabled: false },
-        {"x":1, "y":0, "color":"red", "number":3, "clicked": false, disabled: false },
-        {"x":2, "y":0, "color":"red", "number":4, "clicked": false, disabled: false },   
-        {"x":3, "y":0, "color":"red", "number":5, "clicked": false, disabled: false },
-        {"x":4, "y":0, "color":"red", "number":6, "clicked": false, disabled: false },
-        {"x":5, "y":0, "color":"red", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":0, "color":"red", "number":8, "clicked": false, disabled: false },
-        {"x":7, "y":0, "color":"red", "number":9, "clicked": false, disabled: false},
-        {"x":8, "y":0, "color":"red", "number":10, "clicked": false, disabled: false },
-        {"x":9, "y":0, "color":"red", "number":11, "clicked": false, disabled: false },
-        {"x":10, "y":0, "color":"red", "number":12, "clicked": false, disabled: true },
-    ],
-    [
-        {"x":0, "y":1, "color":"yellow", "number":2, "clicked": false, disabled: false },
-        {"x":1, "y":1, "color":"yellow", "number":3, "clicked": false, disabled: false },
-        {"x":2, "y":1, "color":"yellow", "number":4, "clicked": false, disabled: false },   
-        {"x":3, "y":1, "color":"yellow", "number":5, "clicked": false, disabled: false },
-        {"x":4, "y":1, "color":"yellow", "number":6, "clicked": false, disabled: false },
-        {"x":5, "y":1, "color":"yellow", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":1, "color":"yellow", "number":8, "clicked": false, disabled: false },
-        {"x":7, "y":1, "color":"yellow", "number":9, "clicked": false, disabled: false},
-        {"x":8, "y":1, "color":"yellow", "number":10, "clicked": false, disabled: false },
-        {"x":9, "y":1, "color":"yellow", "number":11, "clicked": false, disabled: false },
-        {"x":10, "y":1, "color":"yellow", "number":12, "clicked": false, disabled: true },
-    ],
-    [
-        {"x":0, "y":2, "color":"green", "number":12, "clicked": false, disabled: false },
-        {"x":1, "y":2, "color":"green", "number":11, "clicked": false, disabled: false },
-        {"x":2, "y":2, "color":"green", "number":10, "clicked": false, disabled: false },   
-        {"x":3, "y":2, "color":"green", "number":9, "clicked": false, disabled: false },
-        {"x":4, "y":2, "color":"green", "number":8, "clicked": false, disabled: false },
-        {"x":5, "y":2, "color":"green", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":2, "color":"green", "number":6, "clicked": false, disabled: false },
-        {"x":7, "y":2, "color":"green", "number":5, "clicked": false, disabled: false},
-        {"x":8, "y":2, "color":"green", "number":4, "clicked": false, disabled: false },
-        {"x":9, "y":2, "color":"green", "number":3, "clicked": false, disabled: false },
-        {"x":10, "y":2, "color":"green", "number":2, "clicked": false, disabled: true },
-    ],
-    [
-        {"x":0, "y":3, "color":"blue", "number":12, "clicked": false, disabled: false },
-        {"x":1, "y":3, "color":"blue", "number":11, "clicked": false, disabled: false },
-        {"x":2, "y":3, "color":"blue", "number":10, "clicked": false, disabled: false },   
-        {"x":3, "y":3, "color":"blue", "number":9, "clicked": false, disabled: false },
-        {"x":4, "y":3, "color":"blue", "number":8, "clicked": false, disabled: false },
-        {"x":5, "y":3, "color":"blue", "number":7, "clicked": false, disabled: false },
-        {"x":6, "y":3, "color":"blue", "number":6, "clicked": false, disabled: false },
-        {"x":7, "y":3, "color":"blue", "number":5, "clicked": false, disabled: false},
-        {"x":8, "y":3, "color":"blue", "number":4, "clicked": false, disabled: false },
-        {"x":9, "y":3, "color":"blue", "number":3, "clicked": false, disabled: false },
-        {"x":10, "y":3, "color":"blue", "number":2, "clicked": false, disabled: true },
-    ]
-];
+// const standardRows = [
+//     [
+//         {"x":0, "y":0, "color":"red", "number":2, "clicked": false, disabled: false },
+//         {"x":1, "y":0, "color":"red", "number":3, "clicked": false, disabled: false },
+//         {"x":2, "y":0, "color":"red", "number":4, "clicked": false, disabled: false },   
+//         {"x":3, "y":0, "color":"red", "number":5, "clicked": false, disabled: false },
+//         {"x":4, "y":0, "color":"red", "number":6, "clicked": false, disabled: false },
+//         {"x":5, "y":0, "color":"red", "number":7, "clicked": false, disabled: false },
+//         {"x":6, "y":0, "color":"red", "number":8, "clicked": false, disabled: false },
+//         {"x":7, "y":0, "color":"red", "number":9, "clicked": false, disabled: false},
+//         {"x":8, "y":0, "color":"red", "number":10, "clicked": false, disabled: false },
+//         {"x":9, "y":0, "color":"red", "number":11, "clicked": false, disabled: false },
+//         {"x":10, "y":0, "color":"red", "number":12, "clicked": false, disabled: true },
+//     ],
+//     [
+//         {"x":0, "y":1, "color":"yellow", "number":2, "clicked": false, disabled: false },
+//         {"x":1, "y":1, "color":"yellow", "number":3, "clicked": false, disabled: false },
+//         {"x":2, "y":1, "color":"yellow", "number":4, "clicked": false, disabled: false },   
+//         {"x":3, "y":1, "color":"yellow", "number":5, "clicked": false, disabled: false },
+//         {"x":4, "y":1, "color":"yellow", "number":6, "clicked": false, disabled: false },
+//         {"x":5, "y":1, "color":"yellow", "number":7, "clicked": false, disabled: false },
+//         {"x":6, "y":1, "color":"yellow", "number":8, "clicked": false, disabled: false },
+//         {"x":7, "y":1, "color":"yellow", "number":9, "clicked": false, disabled: false},
+//         {"x":8, "y":1, "color":"yellow", "number":10, "clicked": false, disabled: false },
+//         {"x":9, "y":1, "color":"yellow", "number":11, "clicked": false, disabled: false },
+//         {"x":10, "y":1, "color":"yellow", "number":12, "clicked": false, disabled: true },
+//     ],
+//     [
+//         {"x":0, "y":2, "color":"green", "number":12, "clicked": false, disabled: false },
+//         {"x":1, "y":2, "color":"green", "number":11, "clicked": false, disabled: false },
+//         {"x":2, "y":2, "color":"green", "number":10, "clicked": false, disabled: false },   
+//         {"x":3, "y":2, "color":"green", "number":9, "clicked": false, disabled: false },
+//         {"x":4, "y":2, "color":"green", "number":8, "clicked": false, disabled: false },
+//         {"x":5, "y":2, "color":"green", "number":7, "clicked": false, disabled: false },
+//         {"x":6, "y":2, "color":"green", "number":6, "clicked": false, disabled: false },
+//         {"x":7, "y":2, "color":"green", "number":5, "clicked": false, disabled: false},
+//         {"x":8, "y":2, "color":"green", "number":4, "clicked": false, disabled: false },
+//         {"x":9, "y":2, "color":"green", "number":3, "clicked": false, disabled: false },
+//         {"x":10, "y":2, "color":"green", "number":2, "clicked": false, disabled: true },
+//     ],
+//     [
+//         {"x":0, "y":3, "color":"blue", "number":12, "clicked": false, disabled: false },
+//         {"x":1, "y":3, "color":"blue", "number":11, "clicked": false, disabled: false },
+//         {"x":2, "y":3, "color":"blue", "number":10, "clicked": false, disabled: false },   
+//         {"x":3, "y":3, "color":"blue", "number":9, "clicked": false, disabled: false },
+//         {"x":4, "y":3, "color":"blue", "number":8, "clicked": false, disabled: false },
+//         {"x":5, "y":3, "color":"blue", "number":7, "clicked": false, disabled: false },
+//         {"x":6, "y":3, "color":"blue", "number":6, "clicked": false, disabled: false },
+//         {"x":7, "y":3, "color":"blue", "number":5, "clicked": false, disabled: false},
+//         {"x":8, "y":3, "color":"blue", "number":4, "clicked": false, disabled: false },
+//         {"x":9, "y":3, "color":"blue", "number":3, "clicked": false, disabled: false },
+//         {"x":10, "y":3, "color":"blue", "number":2, "clicked": false, disabled: true },
+//     ]
+// ];
 
-const standardLocks = [
-    {"row" : 0, "color" : "red", "clicked" : false },
-    {"row" : 1, "color" : "yellow", "clicked" : false },
-    {"row" : 2, "color" : "green", "clicked" : false },
-    {"row" : 3, "color" : "blue", "clicked" : false }
-];
+// const standardLocks = [
+//     {"row" : 0, "color" : "red", "clicked" : false },
+//     {"row" : 1, "color" : "yellow", "clicked" : false },
+//     {"row" : 2, "color" : "green", "clicked" : false },
+//     {"row" : 3, "color" : "blue", "clicked" : false }
+// ];
 
 const baseScores = [
     { "color":"red",    "score":0,    "hidden":true },
@@ -452,5 +491,7 @@ const baseScores = [
     { "color":"grey",   "score":0,    "hidden":true },
     { "color":"total",  "score":null, "hidden":false }
 ]
+
+const highlightScore = { "color" : "highlight", "score":0, "hidden":true }
 
 export default Scorecard;

@@ -19,6 +19,9 @@ class NumberSquare extends React.Component {
         if (this.props.data.clicked) {
             btnClasses += " sc-num-btn-clicked";
         }
+        if (this.props.data.highlight) {
+            btnClasses += " sc-num-btn-highlight";
+        }
         var id = "sc-numsquare-" + this.props.data.x + this.props.data.y;
 
         return (
